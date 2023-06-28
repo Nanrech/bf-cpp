@@ -13,7 +13,7 @@ INCLUDEDIR = "include"
 
 # Output
 LOGFILE = ".\\bin\\build.log"
-OUTFILE = ".\\bin\\bbf"
+OUTFILE = ".\\bin\\bfc"
 
 if __name__ == "__main__":
 
