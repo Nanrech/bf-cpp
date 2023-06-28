@@ -11,7 +11,7 @@ int main(int argc, char* argv[]) {
   // Don't look here, it's ugly
 
   if (argc != 2) {
-    cout << "Enter filename" << endl;
+    cout << "Usage: '.\\bbf.exe <program.bf>'. Missing bf file." << endl;
     return EXIT_FAILURE;
   }
 
