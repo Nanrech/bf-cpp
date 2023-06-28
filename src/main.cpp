@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include "opcodes.hpp"
 #include "interpreter.hpp"
 
 using namespace std;
@@ -21,18 +20,18 @@ int main(int argc, char* argv[]) {
     return EXIT_FAILURE;
   }
 
+  BfInterpreter interpreter;
   vector<char> tokens;
   char aux_char;
 
   while (in_file.get(aux_char)) {
-    if (is_opcode(aux_char)) {
+    if (interpreter.is_opcode(aux_char)) {
       tokens.insert(tokens.end(), aux_char);
     }
   }
-
   in_file.close();
 
-  BfInterpreter interpreter;
+  cout << ">bfc run " << argv[1] << endl;
   interpreter.run(tokens);
 
   return EXIT_SUCCESS;

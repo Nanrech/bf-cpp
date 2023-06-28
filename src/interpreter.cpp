@@ -60,40 +60,60 @@ void BfInterpreter::bracket_close(size_t &i) {
   stack.pop();
 }
 
+bool BfInterpreter::is_opcode(const char c) {
+  char op_arr[] = {
+    '>',
+    '<',
+    '+',
+    '-',
+    '.',
+    ',',
+    '[',
+    ']'
+  };
+  
+  for (int i = 0; i <= 8; i++) {
+    if (op_arr[i] == c)
+      return true;
+  }
+
+  return false;
+}
+
 void BfInterpreter::run(const std::vector<char> &tokens) {
   size_t i = 0;
 
   while (i <= tokens.size()) {
     switch(tokens[i]) {
-      case MOVE_RIGHT:
+      case '>':
         move_right();
         break;
 
-      case MOVE_LEFT:
+      case '<':
         move_left();
         break;
 
-      case INCREMENT:
+      case '+':
         increment();
         break;
 
-      case DECREMENT:
+      case '-':
         decrement();
         break;
 
-      case OUTPUT:
+      case '.':
         output();
         break;
 
-      case INPUT:
+      case ',':
         input();
         break;
 
-      case BRACKET_OPEN:
+      case '[':
         bracket_open(i);
         break;
 
-      case BRACKET_CLOSE:
+      case ']':
         bracket_close(i);
         break;
 

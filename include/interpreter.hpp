@@ -2,7 +2,6 @@
 #include <stack>
 #include <iostream>
 #include <stdexcept>
-#include "opcodes.hpp"
 
 
 class BfInterpreter {
@@ -23,5 +22,6 @@ class BfInterpreter {
   public:
     // Debug function
     void view_tape();
+    bool is_opcode(const char c);
     void run(const std::vector<char> &tokens);
 };
