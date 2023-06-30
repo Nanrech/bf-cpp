@@ -20,19 +20,19 @@ int main(int argc, char* argv[]) {
     return EXIT_FAILURE;
   }
 
-  BfInterpreter interpreter;
+  BfInterpreter Interpreter;
   vector<char> tokens;
   char aux_char;
 
   while (in_file.get(aux_char)) {
-    if (interpreter.is_opcode(aux_char)) {
+    if (Interpreter.is_opcode(aux_char)) {
       tokens.insert(tokens.end(), aux_char);
     }
   }
   in_file.close();
 
   cout << ">bfc run " << argv[1] << endl;
-  interpreter.run(tokens);
+  Interpreter.run(tokens);
 
   return EXIT_SUCCESS;
 }
