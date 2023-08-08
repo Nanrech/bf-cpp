@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include "interpreter.hpp"
+#include "interpreter.h"
 
 using namespace std;
 

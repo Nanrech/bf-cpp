@@ -1,4 +1,4 @@
-#include "interpreter.hpp"
+#include "interpreter.h"
 
 
 void BfInterpreter::view_tape() {
@@ -56,7 +56,14 @@ void BfInterpreter::bracket_close(size_t &i) {
     stack.pop();
     return;
   }
-  i = 0 > stack.top() - 1 ? 0 : stack.top() - 1;
+
+  if (stack.top() == 0) {
+    i = 0;
+  }
+  else {
+    i = stack.top() - 1;
+  }
+
   stack.pop();
 }
 
