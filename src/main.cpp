@@ -10,14 +10,14 @@ int main(int argc, char* argv[]) {
   // Don't look here, it's ugly
 
   if (argc != 2) {
-    cout << "Usage: '.\\bbf.exe <program.bf>'. Missing bf file." << endl;
-    return EXIT_FAILURE;
+    cout << "Usage: '.\\" << argv[0] << " <program.bf>'. Missing bf file." << endl;
+    return 1;
   }
 
   ifstream in_file(argv[1]);
   if (in_file.fail()) {
-    cout << "Error reading file " << argv[1] << endl;
-    return EXIT_FAILURE;
+    cout << "Error reading " << argv[1] << endl;
+    return 1;
   }
 
   BfInterpreter Interpreter;
@@ -31,8 +31,8 @@ int main(int argc, char* argv[]) {
   }
   in_file.close();
 
-  cout << ">bfc run " << argv[1] << endl;
+  cout << argv[1] << endl;
   Interpreter.run(tokens);
 
-  return EXIT_SUCCESS;
+  return 0;
 }
