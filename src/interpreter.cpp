@@ -68,23 +68,8 @@ void BfInterpreter::bracket_close(size_t &i) {
 }
 
 bool BfInterpreter::is_opcode(const char c) {
-  char op_arr[] = {
-    '>',
-    '<',
-    '+',
-    '-',
-    '.',
-    ',',
-    '[',
-    ']'
-  };
-  
-  for (int i = 0; i <= 8; i++) {
-    if (op_arr[i] == c)
-      return true;
-  }
-
-  return false;
+  const std::string op_arr = std::string("><+-.,[]");
+  return (op_arr.find(c) != std::string::npos);
 }
 
 void BfInterpreter::run(const std::vector<char> &tokens) {
