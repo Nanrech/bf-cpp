@@ -20,8 +20,8 @@ class BfInterpreter {
     void bracket_close(size_t &i);
 
   public:
-    // Debug function
-    void view_tape();
     bool is_opcode(const char c);
     void run(const std::vector<char> &tokens);
+    // Debug function
+    void view_tape();
 };
