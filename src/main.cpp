@@ -1,6 +1,6 @@
 #include <iostream>
 #include <fstream>
-#include <vector>
+#include <stack>
 #include "interpreter.h"
 
 using namespace std;
@@ -8,96 +8,87 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
   // Don't look here, it's ugly
-
   if (argc != 2) {
     cout << "Usage: '.\\" << argv[0] << " <program.bf>'. Missing bf file." << endl;
     return 1;
   }
-
+  // Standard error checking
   ifstream in_file(argv[1]);
   if (in_file.fail()) {
     cout << "Error reading " << argv[1] << endl;
     return 1;
   }
 
-  BfInterpreter Interpreter;
-  vector<BfToken> token_list;
-  vector<unsigned int> token_stack;
-  char c;
+  // ---- Parser happens below this point ----
 
+  BfInterpreter interpreter;
+  stack<unsigned int> bracket_stack;  // Keeps track of previous brackets
+  //int bracket_check = 0;              // Good old reliable bracket_check == 0
+  char c;                             // char of holding
+  unsigned int total_tokens = 0;
 
-  while (in_file.get(c)) {
-    // Implementation sorta inspired by tsoding's https://github.com/tsoding/bfjit
-    switch (c) {
-      case BFT_MOVR:
-      case BFT_MOVL:
-      case BFT_INC:
-      case BFT_DEC:
-      case BFT_OUT:
-      case BFT_INP: {
-        unsigned int count = 1;
-        char next_c = '\0';
-        in_file.get(next_c);
+  while (!in_file.get(c).eof()) {
+    char buffer_c = c;
+    unsigned int amount = 1;
 
-        while (c == next_c || !Interpreter.is_opcode(next_c)) {
-          if (!Interpreter.is_opcode(next_c)) {
-              if (!in_file.get(next_c)) {
-                break;
-              }
-              continue;
+    if (IS_OPERATOR_CHAR(c)) {
+      while (!in_file.get(c).eof()) {
+        if (!IS_VALID_CHAR(c)) {
+          // Text, whitespace, whatever. Don't need it. Skip.
+          continue;
+        }
+        else {
+          if (c == buffer_c) {
+            // Minor optimization
+            // Merge consecutive equal tokens into one
+            amount++;
+            continue;
           }
-          count++;
-          in_file.get(next_c);
+          else {
+            // Put it back where it came from
+            in_file.putback(c);
+            // And insert what we must
+            interpreter.tokens.push_back(BfToken {.amount = amount, .type = buffer_c});
+            total_tokens++;
+            break;
+          }
         }
-
-        in_file.putback(next_c);
-
-        BfToken token = {
-          .amount = count,
+      }
+      if (in_file.eof()) {
+        interpreter.tokens.push_back(BfToken {.amount = amount, .type = buffer_c});
+        total_tokens++;
+      }
+    }
+    else if (IS_BRACKET_CHAR(c)) {
+      if (c == '[') {
+        BfToken new_token = {
+          .amount = amount,
+          .type = buffer_c
+        };
+        interpreter.tokens.push_back(new_token);
+        bracket_stack.push(total_tokens);
+        total_tokens++;
+      }
+      else {
+        if (bracket_stack.empty()) {
+          cout << "Invalid syntax (bracket mismatch)" << endl;
+          exit(-1);
+        }
+        BfToken new_token = {
+          .amount = bracket_stack.top(),
           .type = c
         };
-
-        token_list.push_back(token);
-        c = next_c;
-        break;
+        interpreter.tokens[bracket_stack.top()].amount = total_tokens;
+        interpreter.tokens.push_back(new_token);
+        bracket_stack.pop();
+        total_tokens++;
       }
-      
-      case BFT_BRO: {
-        BfToken token = {
-          .amount = token_list.size(),
-          .type = BFT_BRO
-        };
-        token_stack.push_back(token.amount);
-        token_list.push_back(token);
-        break;
-      }
-      
-      case BFT_BRC: {
-        if (token_stack.empty()) {
-          // uuuuuuuunnnnnnnnnnnnnngggggggggggghhhhhhhhhhhhhhhhhhhhhhhhhhhh
-          // https://youtu.be/W-ZuKp8P7gA?t=2934 
-          throw runtime_error("\n");
-        }
-        unsigned int previous = token_stack.back();
-        token_stack.pop_back();
-        
-        BfToken token = {
-          .amount = previous,
-          .type = c
-        };
-
-        token_list[previous].amount = token_list.size();
-        token_list.push_back(token);
-        break;
-      }
-
-      default:
-        break;
     }
   }
-
   in_file.close();
-  Interpreter.run(token_list);
-  
+
+  // Done!
+  interpreter.run();
+
   return 0;
 }
