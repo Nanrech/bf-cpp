@@ -30,7 +30,11 @@ int main(int argc, char* argv[]) {
     char buffer_c = c;
     unsigned int amount = 1;
 
-    if (IS_OPERATOR_CHAR(c)) {
+    if (IS_IO_CHAR(c)) {
+      interpreter.tokens.push_back(BfToken {.amount = amount, .type = buffer_c});
+      total_tokens++;
+    }
+    else if (IS_MULTI_OPERATOR_CHAR(c)) {
       while (!in_file.get(c).eof()) {
         if (!IS_VALID_CHAR(c)) {
           // Text, whitespace, whatever. Don't need it. Skip.

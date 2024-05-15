@@ -98,18 +98,11 @@ inline void BfInterpreter::decrement() {
 }
 
 inline void BfInterpreter::output() {
-  for (unsigned int _ = 0; _ < tokens[program_pointer].amount; _++) {
-    cout << tape[tape_pointer];
-  }
+  cout << tape[tape_pointer];
 }
 
 inline void BfInterpreter::input() {
-  // No idea why this (more than one consecutive ,) would ever be used but it is supported
-  for (unsigned int _ = 0; _ < tokens[program_pointer].amount; _++) {
-    char c;
-    cin >> c;
-    tape[tape_pointer] = c;
-  }
+  cin >> tape[tape_pointer];
 }
 
 inline void BfInterpreter::bracket_open() {

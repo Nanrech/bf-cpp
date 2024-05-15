@@ -2,7 +2,8 @@
 #include <iostream>
 
 #define IS_VALID_CHAR(c) (c == '>' || c == '<' || c == '+' || c == '-' || c == '.' || c == ',' || c == '[' || c == ']')
-#define IS_OPERATOR_CHAR(c) (c == '>' || c == '<' || c == '+' || c == '-' || c == '.' || c == ',')
+#define IS_MULTI_OPERATOR_CHAR(c) (c == '>' || c == '<' || c == '+' || c == '-')
+#define IS_IO_CHAR(c) (c == '.' || c == ',')
 #define IS_BRACKET_CHAR(c) (c == '[' || c == ']')
 
 using namespace std;
@@ -16,7 +17,7 @@ typedef struct {
 class BfInterpreter {
   private:
     size_t program_pointer;         // For .tokens
-    vector<char> tape = {0};        // Unlimited length tape
+    vector<unsigned char> tape = {0};        // Unlimited length tape
     unsigned int tape_pointer = 0;  // Current cell in tape
 
     void move_right();
