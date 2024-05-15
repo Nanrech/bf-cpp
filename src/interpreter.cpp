@@ -20,7 +20,7 @@ void BfInterpreter::run() {
   //ofstream out("out.txt"); // Messing with stdout. Ignore.
   //streambuf *sout = cout.rdbuf();
 
-  for (program_pointer = 0; program_pointer <= tokens.size() - 1;) {
+  for (program_pointer = 0; program_pointer <= tokens.size() - 1; program_pointer++) {
   // The program pointer moves inside each of these bc brackets mess with the flow
     
     // DEBUG:
@@ -83,14 +83,13 @@ void BfInterpreter::move_right() {
       tape_pointer++;
     }
   }
-
-  program_pointer++;
 }
 
 void BfInterpreter::move_left() {
   // Move .amount to the left. No negative index allowed
   unsigned int token_amount = tokens[program_pointer].amount;
   // "error: cOmPaRiSoN oF uNsIgNeD eXpReSsIoN iN '>= 0' iS aLwAyS tRuE" 🤓☝
+  // error here bc tape_pointer and token.amount are both unsigned so they'd wrap around
   int diff = tape_pointer - token_amount;
 
   if (diff >= 0) {
@@ -99,25 +98,20 @@ void BfInterpreter::move_left() {
   else {
     tape_pointer = 0;
   }
-
-  program_pointer++;
 }
 
 void BfInterpreter::increment() {
   tape[tape_pointer] += tokens[program_pointer].amount;
-  program_pointer++;
 }
 
 void BfInterpreter::decrement() {
   tape[tape_pointer] -= tokens[program_pointer].amount;
-  program_pointer++;
 }
 
 void BfInterpreter::output() {
   for (unsigned int _ = 0; _ < tokens[program_pointer].amount; _++) {
     cout << tape[tape_pointer];
   }
-  program_pointer++;
 }
 
 void BfInterpreter::input() {
@@ -127,24 +121,22 @@ void BfInterpreter::input() {
     cin >> c;
     tape[tape_pointer] = c;
   }
-
-  program_pointer++;
 }
 
 void BfInterpreter::bracket_open() {
   if (tape[tape_pointer] == 0) {
-    program_pointer = tokens[program_pointer].amount + 1;
+    program_pointer = tokens[program_pointer].amount;
   }
   else {
-    program_pointer++;
+    return;
   }
 }
 
 void BfInterpreter::bracket_close() {
   if (tape[tape_pointer] != 0) {
-    program_pointer = tokens[program_pointer].amount + 1;
+    program_pointer = tokens[program_pointer].amount;
   }
   else {
-    program_pointer++;
+    return;
   }
 }
