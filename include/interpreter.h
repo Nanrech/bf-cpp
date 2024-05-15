@@ -15,9 +15,9 @@ typedef struct {
 
 class BfInterpreter {
   private:
-    size_t program_pointer;            // For .tokens
-    vector<char> tape = {0};  // Unlimited length tape
-    unsigned int tape_pointer = 0;     // Current cell in tape
+    size_t program_pointer;         // For .tokens
+    vector<char> tape = {0};        // Unlimited length tape
+    unsigned int tape_pointer = 0;  // Current cell in tape
 
     void move_right();
     void move_left();
@@ -29,7 +29,7 @@ class BfInterpreter {
     void bracket_close();
 
   public:
-    vector<BfToken> tokens; // No encapsulation. I'm taking the tokens from main and inserting them into this thing RAW.
-    void run();             // Executes everything
-    void view_tape();       // Debug function
+    vector<BfToken> tokens;  // No encapsulation needed
+    void run();              // Executes everything
+    void view_tape();        // Debug function
 };

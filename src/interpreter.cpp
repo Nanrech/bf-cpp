@@ -16,18 +16,7 @@ void BfInterpreter::view_tape() {
 
 void BfInterpreter::run() {
   // Loops through all registered tokens and executes them. Pretty self-explanatory
-
-  //ofstream out("out.txt"); // Messing with stdout. Ignore.
-  //streambuf *sout = cout.rdbuf();
-
   for (program_pointer = 0; program_pointer <= tokens.size() - 1; program_pointer++) {
-  // The program pointer moves inside each of these bc brackets mess with the flow
-    
-    // DEBUG:
-    //cout.rdbuf(out.rdbuf());
-    //view_tape();
-    //cout.rdbuf(sout);
-
     switch (tokens[program_pointer].type) {
       case '>':
         move_right();
@@ -68,7 +57,7 @@ void BfInterpreter::run() {
   }
 }
 
-void BfInterpreter::move_right() {
+inline void BfInterpreter::move_right() {
   // Move .amount to the right. If the tape is too small, expand it
   unsigned int token_amount = tokens[program_pointer].amount;
 
@@ -85,7 +74,7 @@ void BfInterpreter::move_right() {
   }
 }
 
-void BfInterpreter::move_left() {
+inline void BfInterpreter::move_left() {
   // Move .amount to the left. No negative index allowed
   unsigned int token_amount = tokens[program_pointer].amount;
   // "error: cOmPaRiSoN oF uNsIgNeD eXpReSsIoN iN '>= 0' iS aLwAyS tRuE" 🤓☝
@@ -100,21 +89,21 @@ void BfInterpreter::move_left() {
   }
 }
 
-void BfInterpreter::increment() {
+inline void BfInterpreter::increment() {
   tape[tape_pointer] += tokens[program_pointer].amount;
 }
 
-void BfInterpreter::decrement() {
+inline void BfInterpreter::decrement() {
   tape[tape_pointer] -= tokens[program_pointer].amount;
 }
 
-void BfInterpreter::output() {
+inline void BfInterpreter::output() {
   for (unsigned int _ = 0; _ < tokens[program_pointer].amount; _++) {
     cout << tape[tape_pointer];
   }
 }
 
-void BfInterpreter::input() {
+inline void BfInterpreter::input() {
   // No idea why this (more than one consecutive ,) would ever be used but it is supported
   for (unsigned int _ = 0; _ < tokens[program_pointer].amount; _++) {
     char c;
@@ -123,7 +112,7 @@ void BfInterpreter::input() {
   }
 }
 
-void BfInterpreter::bracket_open() {
+inline void BfInterpreter::bracket_open() {
   if (tape[tape_pointer] == 0) {
     program_pointer = tokens[program_pointer].amount;
   }
@@ -132,7 +121,7 @@ void BfInterpreter::bracket_open() {
   }
 }
 
-void BfInterpreter::bracket_close() {
+inline void BfInterpreter::bracket_close() {
   if (tape[tape_pointer] != 0) {
     program_pointer = tokens[program_pointer].amount;
   }

@@ -9,7 +9,7 @@ using namespace std;
 int main(int argc, char* argv[]) {
   // Don't look here, it's ugly
   if (argc != 2) {
-    cout << "Usage: '.\\" << argv[0] << " <program.bf>'. Missing bf file." << endl;
+    cout << "Usage: " << argv[0] << " <program.bf>\nMissing bf file." << endl;
     return 1;
   }
   // Standard error checking
@@ -23,7 +23,6 @@ int main(int argc, char* argv[]) {
 
   BfInterpreter interpreter;
   stack<unsigned int> bracket_stack;  // Keeps track of previous brackets
-  //int bracket_check = 0;              // Good old reliable bracket_check == 0
   char c;                             // char of holding
   unsigned int total_tokens = 0;
 
@@ -39,8 +38,8 @@ int main(int argc, char* argv[]) {
         }
         else {
           if (c == buffer_c) {
-            // Minor optimization
-            // Merge consecutive equal tokens into one
+            // Minor optimization. The parser merges consecutive equal tokens into one
+            // So ++++++++ would be one {'+', 8} token instead of 8 '+' tokens
             amount++;
             continue;
           }
