@@ -16,9 +16,9 @@ typedef struct {
 
 class BfInterpreter {
   private:
-    size_t program_pointer;         // For .tokens
-    vector<unsigned char> tape = {0};        // Unlimited length tape
-    unsigned int tape_pointer = 0;  // Current cell in tape
+    size_t program_pointer;            // For .tokens
+    vector<unsigned char> tape = {0};  // Unlimited length tape
+    unsigned int tape_pointer = 0;     // Current cell in tape
 
     void move_right();
     void move_left();
