@@ -27,11 +27,11 @@ int main(int argc, char* argv[]) {
   unsigned int total_tokens = 0;
 
   while (!in_file.get(c).eof()) {
-    char buffer_c = c;
-    unsigned int amount = 1;
+    char buffer_character = c;
+    unsigned int single_token_amount = 1;
 
     if (IS_IO_CHAR(c)) {
-      interpreter.tokens.push_back(BfToken {.amount = amount, .type = buffer_c});
+      interpreter.tokens.push_back(BfToken {.amount = single_token_amount, .type = buffer_character});
       total_tokens++;
     }
     else if (IS_MULTI_OPERATOR_CHAR(c)) {
@@ -41,32 +41,32 @@ int main(int argc, char* argv[]) {
           continue;
         }
         else {
-          if (c == buffer_c) {
+          if (c == buffer_character) {
             // Minor optimization. The parser merges consecutive equal tokens into one
             // So ++++++++ would be one {'+', 8} token instead of 8 '+' tokens
-            amount++;
+            single_token_amount++;
             continue;
           }
           else {
             // Put it back where it came from
             in_file.putback(c);
             // And insert what we must
-            interpreter.tokens.push_back(BfToken {.amount = amount, .type = buffer_c});
+            interpreter.tokens.push_back(BfToken {.amount = single_token_amount, .type = buffer_character});
             total_tokens++;
             break;
           }
         }
       }
       if (in_file.eof()) {
-        interpreter.tokens.push_back(BfToken {.amount = amount, .type = buffer_c});
+        interpreter.tokens.push_back(BfToken {.amount = single_token_amount, .type = buffer_character});
         total_tokens++;
       }
     }
     else if (IS_BRACKET_CHAR(c)) {
       if (c == '[') {
         BfToken new_token = {
-          .amount = amount,
-          .type = buffer_c
+          .amount = single_token_amount,
+          .type = buffer_character
         };
         interpreter.tokens.push_back(new_token);
         bracket_stack.push(total_tokens);
