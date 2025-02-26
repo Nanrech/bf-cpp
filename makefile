@@ -5,7 +5,7 @@ EXE = bfc
 CC = g++
 
 # CFlags
-CFLAGS = -Iinclude -std=c++23 -Wall -MMD -MP # -Wfatal-errors -Wextra -Werror
+CFLAGS = -Iinclude -std=c++23 -Wall -MMD -MP -Wfatal-errors -Wextra -Werror
 
 # Makefile wizardry
 SRC = $(wildcard src/*.cpp)
