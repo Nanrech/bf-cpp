@@ -6,11 +6,12 @@
 #include <array>
 
 #define MAX_TAPE_SIZE 30000
-#define IS_CHAR_VALID(c) (c == '>' || c == '<' || c == '+' || c == '-' || c == '.' || c == ',' || c == '[' || c == ']')
+#define IS_CHAR_VALID(currentChar) (currentChar == '>' || currentChar == '<' || currentChar == '+' || currentChar == '-' || currentChar == '.' || currentChar == ',' || currentChar == '[' || currentChar == ']')
+#define IS_CHAR_MULTI(currentChar) (currentChar == '>' || currentChar == '<' || currentChar == '+' || currentChar == '-')
 
 typedef struct Token {
   char type;
-  int data; // index to matching jump instruction
+  unsigned int data; // index to matching jump instruction OR nº times command should be repeated
 } Token;
 
 
@@ -30,18 +31,27 @@ int main(int argc, char* argv[]) {
   }
 
   // ---- Read file ----
-  // First pass, calculate amount of tokens
-  char c;
+  // First pass, get amount of tokens
+  char currentChar;
+  char lastChar = '\0';
+
   int tokenAmount = 0;
 
-  while (inFile.get(c)) {
-    if (IS_CHAR_VALID(c)) {
+  while (inFile.get(currentChar)) {
+    if (!IS_CHAR_VALID(currentChar)) { continue; }
+
+    // Some successive characters are just stored as a single command
+    // Their 'data' field represents how many times it should be executed
+    if (!IS_CHAR_MULTI(currentChar) || currentChar != lastChar) {
       tokenAmount++;
     }
+
+    lastChar = currentChar;
   }
 
   // ---- init 'ROM' ----
   std::vector<Token> commands;
+  std::cout << "Token amount: " << tokenAmount << std::endl;
   commands.resize(tokenAmount);
 
   // Rewind file
@@ -50,34 +60,43 @@ int main(int argc, char* argv[]) {
 
   // ---- Store tokens ----
   // Second pass, store tokens
-  int i = 0;
-  std::stack<int> bracketStack;
+  unsigned int i = 0;
+  unsigned int data = 1;
+  lastChar = '\0';
+  std::stack<unsigned int> bracketStack;
 
-  while (inFile.get(c)) {
-    if (!IS_CHAR_VALID(c)) { continue; }
+  while (inFile.get(currentChar)) {
+    if (!IS_CHAR_VALID(currentChar)) { continue; }
 
-    int data = 0;
-
-    if (c == '[') {
-      // Store last opening bracket
+    if (currentChar == '[') {
       bracketStack.push(i);
+      data = 1;
     }
-    else if (c == ']') {
-      // Check for underflow
-      if (bracketStack.size() == 0) {
+    else if (currentChar == ']') {
+      if (bracketStack.empty()) {
         std::cout << "Error in input file at pos. " << inFile.tellg() << std::endl;
         throw std::runtime_error("Unmatched Closing Bracket");
       }
-
-      // Assign latest opening bracket and pop the stack
+      // Assign last opening bracket's index to this one
       data = bracketStack.top();
       bracketStack.pop();
-      // Assign current index to latest opening bracket
+      // Assign this one's index to last bracket
       commands[data].data = i;
     }
+    else {
+      // Optimize
+      if (IS_CHAR_MULTI(currentChar) && currentChar == lastChar) {
+        commands[i - 1].data += 1;
+        continue;
+      }
+      else {
+        data = 1;
+      }
+    }
 
+    lastChar = currentChar;
     commands[i++] = Token {
-      .type = c,
+      .type = currentChar,
       .data = data,
     };
   }
@@ -104,20 +123,20 @@ int main(int argc, char* argv[]) {
     switch (t.type) {
       case '>': {
         if (pointer == tape.size() - 1) { pointer = 0; }
-        else { pointer++; }
+        else { pointer += t.data; }
         break;
       }
       case '<': {
         if (pointer == 0) { pointer = tape.size() - 1; }
-        else { pointer--; }
+        else { pointer -= t.data; }
         break;
       }
       case '+': {
-        tape[pointer]++;
+        tape[pointer] += t.data;
         break;
       }
       case '-': {
-        tape[pointer]--;
+        tape[pointer] -= t.data;
         break;
       }
       case '.': {
