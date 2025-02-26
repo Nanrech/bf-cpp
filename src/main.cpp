@@ -11,7 +11,7 @@
 
 typedef struct Token {
   char type;
-  unsigned int data; // index to matching jump instruction OR nº times command should be repeated
+  size_t data; // index to matching jump instruction OR nº times command should be repeated
 } Token;
 
 
@@ -59,10 +59,10 @@ int main(int argc, char* argv[]) {
 
   // ---- Store tokens ----
   // Second pass, store tokens
-  unsigned int i = 0;
-  unsigned int data = 1;
+  size_t i = 0;
+  size_t data = 1;
   lastChar = '\0';
-  std::stack<unsigned int> bracketStack;
+  std::stack<size_t> bracketStack;
 
   while (inFile.get(currentChar)) {
     if (!IS_CHAR_VALID(currentChar)) { continue; }
@@ -114,7 +114,7 @@ int main(int argc, char* argv[]) {
   size_t pointer = 0;
 
   // ---- Execute ----
-  unsigned int idx = 0;
+  size_t idx = 0;
 
   while (idx != commands.size()) {
     auto t = commands[idx];
