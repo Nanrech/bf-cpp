@@ -51,7 +51,6 @@ int main(int argc, char* argv[]) {
 
   // ---- init 'ROM' ----
   std::vector<Token> commands;
-  std::cout << "Token amount: " << tokenAmount << std::endl;
   commands.resize(tokenAmount);
 
   // Rewind file
